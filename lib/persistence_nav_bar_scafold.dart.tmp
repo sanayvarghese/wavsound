@@ -1,0 +1,37 @@
+import 'package:flutter/material.dart';
+import 'package:wavsound/pages/account.dart';
+import 'package:wavsound/pages/home.dart';
+import 'package:wavsound/pages/library.dart';
+import './persistence_nav_bar.dart';
+
+class HomePage extends StatelessWidget {
+  final _tab1navigatorKey = GlobalKey<NavigatorState>();
+  final _tab2navigatorKey = GlobalKey<NavigatorState>();
+  final _tab3navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return PersistentBottomBarScaffold(
+      items: [
+        PersistentTabItem(
+          tab: Home(),
+          icon: Icons.home_outlined,
+          title: 'Home',
+          navigatorkey: _tab1navigatorKey,
+        ),
+        PersistentTabItem(
+          tab: Library(),
+          icon: Icons.library_music_outlined,
+          title: 'Search',
+          navigatorkey: _tab2navigatorKey,
+        ),
+        PersistentTabItem(
+          tab: Account(),
+          icon: Icons.account_circle_outlined,
+          title: 'Profile',
+          navigatorkey: _tab3navigatorKey,
+        ),
+      ],
+    );
+  }
+}

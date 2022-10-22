@@ -1,0 +1,115 @@
+import 'package:flutter/material.dart';
+import 'package:like_button/like_button.dart';
+import 'package:wavsound/colors.dart';
+import 'package:wavsound/new.dart';
+import 'package:wavsound/pages/account.dart';
+import 'package:wavsound/pages/library.dart';
+import 'package:wavsound/pages/home.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+PersistentTabController _controller = PersistentTabController(initialIndex: 0);
+
+class _MyAppState extends State<MyApp> {
+  var _selectedIndex = 0;
+  var favorite = false;
+  var playing = false;
+  var nowplaying = true;
+  onTap() {
+    setState(() {
+      nowplaying = true;
+    });
+  }
+
+  // _controller =
+  @override
+  Widget build(BuildContext context) {
+    var pages = [
+      Home(onTap: onTap),
+      const Library(),
+      const Account(),
+    ];
+    return MediaQuery(
+      data: const MediaQueryData(),
+      child: MaterialApp(
+        title: "WavSound",
+        theme: ThemeData(
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          primaryColor: AppColors.primaryColor,
+          textTheme: const TextTheme(
+              headline1: TextStyle(color: AppColors.primaryTextColor),
+              headline2: TextStyle(color: AppColors.primaryTextColor),
+              bodyText2: TextStyle(color: AppColors.primaryTextColor)),
+          scaffoldBackgroundColor: AppColors.primaryColor,
+          useMaterial3: true,
+        ),
+        home: SafeArea(
+            child: PersistentTabView.custom(
+          context,
+          controller: _controller,
+          itemCount: _navBarsItems()
+              .length, // This is required in case of custom style! Pass the number of items for the nav bar.
+          screens: _buildScreens(),
+          confineInSafeArea: true,
+          handleAndroidBackButtonPress: true,
+          onWillPop: (p0) {
+            return Future.value(true);
+          },
+
+          customWidget: CustomNavBarWidget(
+            items: _navBarsItems(),
+            selectedIndex: _controller.index,
+            onItemSelected: (index) {
+              setState(() {
+                _controller.index =
+                    index; // NOTE: THIS IS CRITICAL!! Don&#8217;t miss it!
+              });
+            },
+          ),
+        )),
+      ),
+    );
+  }
+}
+
+List<Widget> _buildScreens() {
+  return [Home(), Library(), Account()];
+}
+
+List<PersistentBottomNavBarItem> _navBarsItems() {
+  return [
+    PersistentBottomNavBarItem(
+      icon: Icon(Icons.home),
+      title: ("Home"),
+      activeColorPrimary: AppColors.secondaryColor,
+      inactiveIcon: Icon(Icons.home_outlined),
+      inactiveColorPrimary: AppColors.iconColor,
+    ),
+    PersistentBottomNavBarItem(
+      icon: Icon(Icons.library_music),
+      title: ("Library"),
+      activeColorPrimary: AppColors.secondaryColor,
+      inactiveIcon: Icon(Icons.library_music_outlined),
+      inactiveColorPrimary: AppColors.iconColor,
+    ),
+    PersistentBottomNavBarItem(
+        icon: Icon(Icons.account_circle_rounded),
+        title: ("Library"),
+        activeColorPrimary: AppColors.secondaryColor,
+        inactiveColorPrimary: AppColors.iconColor,
+        // activeColorSecondary: AppColors.dimTextColor,
+        inactiveIcon: Icon(Icons.account_circle_outlined),
+        textStyle: const TextStyle(color: AppColors.dimTextColor)),
+  ];
+}

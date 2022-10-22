@@ -1,0 +1,193 @@
+import 'package:flutter/material.dart';
+import 'package:like_button/like_button.dart';
+import 'package:wavsound/colors.dart';
+import 'package:wavsound/pages/account.dart';
+import 'package:wavsound/pages/library.dart';
+import 'package:wavsound/pages/home.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  var _selectedIndex = 0;
+  var favorite = false;
+  var playing = false;
+  var nowplaying = true;
+  onTap() {
+    setState(() {
+      nowplaying = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    PersistentTabController _controller;
+    _controller = PersistentTabController(initialIndex: 0);
+    var pages = [
+      Home(onTap: onTap),
+      const Library(),
+      const Account(),
+    ];
+    return MaterialApp(
+      title: "WavSound",
+      theme: ThemeData(
+        highlightColor: Colors.transparent,
+        splashColor: Colors.transparent,
+        primaryColor: AppColors.primaryColor,
+        textTheme: const TextTheme(
+            headline1: TextStyle(color: AppColors.primaryTextColor),
+            headline2: TextStyle(color: AppColors.primaryTextColor),
+            bodyText2: TextStyle(color: AppColors.primaryTextColor)),
+        scaffoldBackgroundColor: AppColors.primaryColor,
+        useMaterial3: true,
+      ),
+      home: SafeArea(
+        child: Scaffold(
+            bottomNavigationBar: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                nowplaying
+                    ? GestureDetector(
+                        onTap: (() {
+                          setState(() {
+                            nowplaying = !nowplaying;
+                          });
+                        }),
+                        child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 33,
+                                      height: 29,
+                                      margin: const EdgeInsets.only(right: 10),
+                                      decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5)),
+                                          image: DecorationImage(
+                                              image: AssetImage(
+                                                  "assets/img/raining.jpg"),
+                                              fit: BoxFit.cover)),
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: const [
+                                        Text(
+                                          "Raining",
+                                          style: TextStyle(
+                                              color: AppColors.primaryTextColor,
+                                              fontSize: 18),
+                                        ),
+                                        Text(
+                                          "Source: InApp",
+                                          style: TextStyle(
+                                              color: AppColors.dimTextColor,
+                                              fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    // Like Button
+                                    LikeButton(
+                                      onTap: (isLiked) async {
+                                        setState(() {
+                                          favorite = !isLiked;
+                                        });
+                                        return !isLiked;
+                                      },
+                                      isLiked: favorite,
+                                      likeBuilder: (isLiked) {
+                                        return Icon(
+                                          isLiked
+                                              ? Icons.favorite
+                                              : Icons.favorite_border,
+                                          color: isLiked
+                                              ? Colors.red
+                                              : AppColors.iconColor,
+                                          size: 28,
+                                        );
+                                      },
+                                    ),
+
+                                    const SizedBox(width: 10),
+
+                                    // Play/Pause Button
+
+                                    IconButton(
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      onPressed: () {
+                                        setState(() {
+                                          playing = !playing;
+                                          print(favorite);
+                                        });
+                                      },
+                                      icon: playing
+                                          ? const Icon(Icons.pause)
+                                          : const Icon(Icons.play_arrow_sharp),
+                                      iconSize: 33,
+                                      color: AppColors.iconColor,
+                                    )
+                                  ],
+                                )
+                              ],
+                            )),
+                      )
+                    : const SizedBox(),
+                NavigationBarTheme(
+                  data: NavigationBarThemeData(
+                      indicatorColor: AppColors.secondaryColor,
+                      iconTheme: MaterialStateProperty.all(
+                          const IconThemeData(color: AppColors.iconColor)),
+                      labelTextStyle: MaterialStateProperty.all(
+                          const TextStyle(color: AppColors.primaryTextColor))),
+                  child: NavigationBar(
+                    backgroundColor: AppColors.navColor,
+                    animationDuration: const Duration(seconds: 1),
+                    onDestinationSelected: (int index) {
+                      setState(() {
+                        _selectedIndex = index;
+                        // nowplaying = !nowplaying;
+                      });
+                    },
+                    selectedIndex: _selectedIndex,
+                    destinations: const <Widget>[
+                      NavigationDestination(
+                        icon: Icon(Icons.home_outlined),
+                        label: 'Home',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(Icons.library_music_outlined),
+                        label: 'Library',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(Icons.account_circle_outlined),
+                        label: 'Account',
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            body: pages[_selectedIndex]),
+      ),
+    );
+  }
+}
