@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
-import 'package:wavsound/constants/colors.dart';
+import 'package:wavsound/classes/colors.dart';
 import 'package:wavsound/components/now_playing_widget.dart';
+import 'package:wavsound/classes/persistent_tab_item.dart';
 import 'package:wavsound/pages/now_playing.dart';
 import 'package:wavsound/pages/settings.dart';
 import 'package:wavsound/pages/home.dart';
@@ -22,15 +23,7 @@ class PersistentBottomBarScaffold extends StatefulWidget {
 
 class _PersistentBottomBarScaffoldState
     extends State<PersistentBottomBarScaffold> {
-  // Route Builder
-  static Route<void> _myRouteBuilder(BuildContext context, Object? arguments) {
-    return MaterialPageRoute<void>(
-      builder: (BuildContext context) => const Settings(),
-    );
-  }
-
   // Variables
-
   int _selectedTab = 0;
   var favorite = false;
   var playing = false;
@@ -118,7 +111,7 @@ class _PersistentBottomBarScaffoldState
           onTap: onTap,
         ),
         icon: Icons.library_music_outlined,
-        title: 'Search',
+        title: 'Library',
         navigatorkey: _tab2navigatorKey,
       ),
       PersistentTabItem(
@@ -222,18 +215,4 @@ class _PersistentBottomBarScaffoldState
       ),
     );
   }
-}
-
-/// Model class that holds the tab info for the [PersistentBottomBarScaffold]
-class PersistentTabItem {
-  final Widget tab;
-  final GlobalKey<NavigatorState>? navigatorkey;
-  final String title;
-  final IconData icon;
-
-  PersistentTabItem(
-      {required this.tab,
-      this.navigatorkey,
-      required this.title,
-      required this.icon});
 }

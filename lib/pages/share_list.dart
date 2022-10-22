@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
-import 'package:wavsound/constants/colors.dart';
-import 'package:wavsound/constants/share_page_list.dart';
+import 'package:wavsound/classes/colors.dart';
+import 'package:wavsound/classes/share_page_list.dart';
 import 'package:wavsound/pages/sound_import.dart';
 import 'package:wavsound/pages/sound_stream.dart';
 

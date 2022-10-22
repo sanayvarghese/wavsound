@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
-import 'package:wavsound/constants/colors.dart';
+import 'package:wavsound/classes/colors.dart';
 
 class NowPlayingWidget extends StatefulWidget {
   const NowPlayingWidget(

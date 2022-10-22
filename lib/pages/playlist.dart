@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wavsound/constants/colors.dart';
+import 'package:wavsound/classes/colors.dart';
 import 'package:wavsound/components/library_item.dart';
-import 'package:wavsound/components/rec_list.dart';
-import 'package:wavsound/components/sub_header_home.dart';
 
 class PlayList extends StatefulWidget {
   const PlayList({Key? key, required this.song, this.onTap}) : super(key: key);
@@ -65,18 +63,19 @@ class _LibraryState extends State<PlayList> {
                       width: 80,
                       height: 80,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(5)),
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: widget.song == "Favorite"
                                 ? [
-                                    Color.fromARGB(149, 95, 23, 23),
-                                    Color.fromARGB(204, 195, 46, 46),
+                                    const Color.fromARGB(149, 95, 23, 23),
+                                    const Color.fromARGB(204, 195, 46, 46),
                                   ]
                                 : [
-                                    Color.fromARGB(80, 45, 38, 117),
-                                    Color.fromRGBO(121, 46, 195, 1),
+                                    const Color.fromARGB(80, 45, 38, 117),
+                                    const Color.fromRGBO(121, 46, 195, 1),
                                   ],
                           )),
                       child: Center(
@@ -101,7 +100,7 @@ class _LibraryState extends State<PlayList> {
                           tag: "name${widget.song}",
                           child: Text(
                             widget.song,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 25, fontWeight: FontWeight.w600),
                           )),
                       const Text(

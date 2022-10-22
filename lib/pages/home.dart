@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:wavsound/constants/colors.dart';
+import 'package:wavsound/classes/colors.dart';
 import 'package:wavsound/components/rec_list.dart';
 import 'package:wavsound/components/sub_header_home.dart';
 import 'package:wavsound/pages/playlist.dart';

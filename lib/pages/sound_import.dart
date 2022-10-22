@@ -1,7 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:wavsound/constants/colors.dart';
+import 'package:wavsound/classes/colors.dart';
 
 class SoundImport extends StatefulWidget {
   final String? text;
@@ -18,7 +16,6 @@ class _SoundImportState extends State<SoundImport> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     if (widget.text != null) {
       setState(() {
@@ -30,7 +27,6 @@ class _SoundImportState extends State<SoundImport> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wavsound/constants/colors.dart';
+import 'package:wavsound/classes/colors.dart';
 
 class SoundStream extends StatefulWidget {
   const SoundStream({Key? key}) : super(key: key);

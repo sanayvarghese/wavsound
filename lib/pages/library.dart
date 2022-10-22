@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:wavsound/constants/colors.dart';
+import 'package:wavsound/classes/colors.dart';
 import 'package:wavsound/components/library_item.dart';
-import 'package:wavsound/components/rec_list.dart';
-import 'package:wavsound/components/sub_header_home.dart';
+import 'package:wavsound/models/search.dart';
+import 'package:wavsound/pages/sound_import.dart';
+import 'package:wavsound/pages/sound_stream.dart';
 
 class Library extends StatefulWidget {
   const Library({Key? key, this.onTap}) : super(key: key);
@@ -37,22 +39,117 @@ class _LibraryState extends State<Library> {
                     IconButton(
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
-                      onPressed: () {},
+                      onPressed: () {
+                        showSearch(
+                            context: context,
+                            delegate: CustomSearchDelegate(searchItems: [
+                              "Raining",
+                              "Thunder Storm",
+                              "Snow Fall",
+                              "Morning Forest",
+                              "Night Forest",
+                            ]));
+                      },
                       icon: const Icon(Icons.search),
                       iconSize: 35,
                       color: AppColors.iconColor,
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    IconButton(
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      onPressed: () {},
-                      icon: const Icon(Icons.add),
-                      iconSize: 40,
-                      color: AppColors.iconColor,
-                    ),
+                    // const SizedBox(
+                    //   width: 10,
+                    // ),
+                    // IconButton(
+                    //   padding: EdgeInsets.zero,
+                    //   constraints: const BoxConstraints(),
+                    //   onPressed: () {},
+                    //   icon: const Icon(Icons.add),
+                    //   iconSize: 40,
+                    //   color: AppColors.iconColor,
+                    // ),
+                    PopupMenuButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        splashRadius: 1,
+                        iconSize: 40,
+                        icon: const Icon(
+                          Icons.add,
+                          color: AppColors.iconColor,
+                        ),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(8.0),
+                            bottomRight: Radius.circular(8.0),
+                            topLeft: Radius.circular(8.0),
+                            topRight: Radius.circular(8.0),
+                          ),
+                        ),
+                        color: const Color.fromARGB(248, 34, 32, 32),
+                        itemBuilder: (context) {
+                          return [
+                            PopupMenuItem<int>(
+                              value: 0,
+                              textStyle: const TextStyle(
+                                  color: AppColors.primaryTextColor),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: const [
+                                  Icon(
+                                    Icons.file_download_outlined,
+                                    color: AppColors.iconColor,
+                                  ),
+                                  Text("Import Sounds"),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem<int>(
+                              value: 1,
+                              textStyle: const TextStyle(
+                                  color: AppColors.primaryTextColor),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: const [
+                                  Icon(
+                                    Icons.sensors_rounded,
+                                    color: AppColors.iconColor,
+                                  ),
+                                  Text("Stream Sound"),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem<int>(
+                              value: 2,
+                              textStyle: const TextStyle(
+                                  color: AppColors.primaryTextColor),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: const [
+                                  Icon(
+                                    Icons.video_file,
+                                    color: AppColors.iconColor,
+                                  ),
+                                  Text("Extract audio"),
+                                ],
+                              ),
+                            ),
+                          ];
+                        },
+                        onSelected: (value) {
+                          if (value == 0) {
+                            Navigator.of(context).push(CupertinoPageRoute(
+                              builder: (context) => const SoundImport(),
+                            ));
+                          } else if (value == 1) {
+                            Navigator.of(context).push(CupertinoPageRoute(
+                              builder: (context) => const SoundStream(),
+                            ));
+                          } else if (value == 2) {
+                            Navigator.of(context).push(CupertinoPageRoute(
+                              builder: (context) => const SoundImport(),
+                            ));
+                          }
+                        }),
                   ],
                 )
               ]),
