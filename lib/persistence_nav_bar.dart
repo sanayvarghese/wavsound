@@ -17,11 +17,11 @@ class PersistentBottomBarScaffold extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _PersistentBottomBarScaffoldState createState() =>
-      _PersistentBottomBarScaffoldState();
+  PersistentBottomBarScaffoldState createState() =>
+      PersistentBottomBarScaffoldState();
 }
 
-class _PersistentBottomBarScaffoldState
+class PersistentBottomBarScaffoldState
     extends State<PersistentBottomBarScaffold> {
   // Variables
   int _selectedTab = 0;
@@ -67,8 +67,7 @@ class _PersistentBottomBarScaffoldState
 
   void navigateToShareMedia(BuildContext context, List<SharedMediaFile> value) {
     if (value.isNotEmpty) {
-      var newFiles;
-      newFiles = value.first;
+      var newFiles = value.first;
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => ShareListingScreen(
                 file: newFiles,
@@ -194,11 +193,6 @@ class _PersistentBottomBarScaffoldState
                       .navigatorkey
                       ?.currentState
                       ?.popUntil((route) => route.isFirst);
-                  print("ontap 57 ${_selectedTab}");
-
-                  /// if you want to pop the current tab to its last page
-                  /// then use
-                  // widget.items[index].navigatorkey?.currentState?.pop();
                 } else {
                   setState(() {
                     _selectedTab = index;
