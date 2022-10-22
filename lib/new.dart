@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-import 'package:wavsound/colors.dart';
+import 'package:wavsound/constants/colors.dart';
 
 class CustomNavBarWidget extends StatelessWidget {
   const CustomNavBarWidget({

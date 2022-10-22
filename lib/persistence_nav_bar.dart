@@ -1,11 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:wavsound/colors.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:wavsound/constants/colors.dart';
 import 'package:wavsound/components/now_playing_widget.dart';
 import 'package:wavsound/pages/now_playing.dart';
 import 'package:wavsound/pages/settings.dart';
 import 'package:wavsound/pages/home.dart';
 import 'package:wavsound/pages/library.dart';
+import 'package:wavsound/pages/share_list.dart';
 import 'package:wavsound/utils/custom_navigation.dart';
 
 class PersistentBottomBarScaffold extends StatefulWidget {
@@ -20,11 +22,14 @@ class PersistentBottomBarScaffold extends StatefulWidget {
 
 class _PersistentBottomBarScaffoldState
     extends State<PersistentBottomBarScaffold> {
+  // Route Builder
   static Route<void> _myRouteBuilder(BuildContext context, Object? arguments) {
     return MaterialPageRoute<void>(
       builder: (BuildContext context) => const Settings(),
     );
   }
+
+  // Variables
 
   int _selectedTab = 0;
   var favorite = false;
@@ -34,9 +39,68 @@ class _PersistentBottomBarScaffoldState
     Navigator.of(context).push(CustomPageRoute(child: const NowPlaying()));
   }
 
+  // Global Keys
   final _tab1navigatorKey = GlobalKey<NavigatorState>();
   final _tab2navigatorKey = GlobalKey<NavigatorState>();
   final _tab3navigatorKey = GlobalKey<NavigatorState>();
+
+// //All listeners to listen Sharing media files & text
+  void listenShareMediaFiles(BuildContext context) {
+    // For sharing images coming from outside the app
+    // while the app is in the memory
+    ReceiveSharingIntent.getMediaStream().listen((List<SharedMediaFile> value) {
+      navigateToShareMedia(context, value);
+    }, onError: (err) {
+      debugPrint("$err");
+    });
+
+    // For sharing images coming from outside the app while the app is closed
+    ReceiveSharingIntent.getInitialMedia().then((List<SharedMediaFile> value) {
+      navigateToShareMedia(context, value);
+    });
+
+    // For sharing or opening urls/text coming from outside the app while the app is in the memory
+    ReceiveSharingIntent.getTextStream().listen((String value) {
+      navigateToShareText(context, value);
+    }, onError: (err) {
+      debugPrint("$err");
+    });
+
+    // For sharing or opening urls/text coming from outside the app while the app is closed
+    ReceiveSharingIntent.getInitialText().then((String? value) {
+      navigateToShareText(context, value);
+    });
+  }
+
+  void navigateToShareMedia(BuildContext context, List<SharedMediaFile> value) {
+    if (value.isNotEmpty) {
+      var newFiles;
+      newFiles = value.first;
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ShareListingScreen(
+                file: newFiles,
+                text: "",
+              )));
+    }
+  }
+
+  void navigateToShareText(BuildContext context, String? value) {
+    if (value != null && value.toString().isNotEmpty) {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ShareListingScreen(
+                text: value,
+                file: null,
+              )));
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      listenShareMediaFiles(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

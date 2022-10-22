@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wavsound/colors.dart';
+import 'package:wavsound/constants/colors.dart';
 
 class SubHeader extends StatelessWidget {
   const SubHeader({Key? key, required this.title}) : super(key: key);

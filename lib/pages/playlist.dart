@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wavsound/colors.dart';
+import 'package:wavsound/constants/colors.dart';
 import 'package:wavsound/components/library_item.dart';
 import 'package:wavsound/components/rec_list.dart';
 import 'package:wavsound/components/sub_header_home.dart';

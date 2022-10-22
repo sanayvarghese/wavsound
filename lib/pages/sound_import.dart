@@ -1,10 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:wavsound/colors.dart';
+import 'package:wavsound/constants/colors.dart';
 
 class SoundImport extends StatefulWidget {
-  const SoundImport({Key? key}) : super(key: key);
+  final String? text;
+  const SoundImport({Key? key, this.text}) : super(key: key);
 
   @override
   State<SoundImport> createState() => _SoundImportState();
@@ -13,11 +14,51 @@ class SoundImport extends StatefulWidget {
 class _SoundImportState extends State<SoundImport> {
   String? url;
   String source = "";
+  final inputController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.text != null) {
+      setState(() {
+        inputController.text = widget.text!;
+      });
+      sourceChecker(widget.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  void sourceChecker(value) {
+    if (value.contains("youtube.com/") || value.contains("youtu.be/")) {
+      setState(() {
+        source = "YouTube";
+      });
+    } else if (value.contains("open.spotify.com/")) {
+      setState(() {
+        source = "Spotify";
+      });
+    } else if (value.isEmpty) {
+      setState(() {
+        source = "";
+      });
+    } else {
+      setState(() {
+        source = "Direct Link";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+        margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
         child: Column(children: [
           // Header
           Row(
@@ -76,7 +117,8 @@ class _SoundImportState extends State<SoundImport> {
                   ),
                   Expanded(
                     child: TextField(
-                      style: TextStyle(color: AppColors.primaryTextColor),
+                      controller: inputController,
+                      style: const TextStyle(color: AppColors.primaryTextColor),
                       decoration: const InputDecoration(
                         enabledBorder: UnderlineInputBorder(
                           borderSide:
@@ -91,25 +133,7 @@ class _SoundImportState extends State<SoundImport> {
                         setState(() {
                           url = value;
                         });
-
-                        if (value.contains("youtube.com/") ||
-                            value.contains("youtu.be/")) {
-                          setState(() {
-                            source = "YouTube";
-                          });
-                        } else if (value.contains("open.spotify.com/")) {
-                          setState(() {
-                            source = "Spotify";
-                          });
-                        } else if (value.isEmpty) {
-                          setState(() {
-                            source = "";
-                          });
-                        } else {
-                          setState(() {
-                            source = "Direct Link";
-                          });
-                        }
+                        sourceChecker(value);
                       },
                     ),
                   )

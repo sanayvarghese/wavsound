@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wavsound/colors.dart';
+import 'package:wavsound/constants/colors.dart';
 import 'package:wavsound/components/setting_item.dart';
 
 class Settings extends StatefulWidget {

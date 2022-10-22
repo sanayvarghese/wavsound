@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wavsound/colors.dart';
+import 'package:wavsound/constants/colors.dart';
 
 class RecBoxList extends StatelessWidget {
   const RecBoxList(

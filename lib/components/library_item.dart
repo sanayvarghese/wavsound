@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:wavsound/colors.dart';
+import 'package:wavsound/constants/colors.dart';
 import 'package:wavsound/pages/playlist.dart';
 
 class LibItem extends StatelessWidget {
