@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wavsound/classes/colors.dart';
 import 'package:wavsound/components/library_item.dart';
-import 'package:wavsound/models/search.dart';
+import 'package:wavsound/components/search.dart';
 import 'package:wavsound/pages/sound_import.dart';
 import 'package:wavsound/pages/sound_stream.dart';
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:wavsound/classes/colors.dart';
+import 'package:wavsound/components/time_item.dart';
 
 class NowPlaying extends StatefulWidget {
   const NowPlaying({Key? key}) : super(key: key);
@@ -74,56 +75,118 @@ class _NowPlayingState extends State<NowPlaying> {
                             fit: BoxFit.cover)),
                   ),
                   // Time Bar
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 20),
-                    margin: const EdgeInsets.symmetric(vertical: 15),
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              AppColors.darkBlueColor,
-                              Color.fromARGB(151, 25, 19, 63)
-                            ])),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            // Time
-                            Text(
-                              "Stops in 30min",
-                              style: TextStyle(
-                                  color: AppColors.dimTextColor, fontSize: 15),
-                            ),
-                            Text(
-                              "9:20 am",
-                              style: TextStyle(
-                                  color: AppColors.primaryTextColor,
-                                  fontSize: 13),
-                            ),
-                          ],
+                  GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        backgroundColor: AppColors.primaryColor,
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(25.0),
+                          ),
                         ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Text("30 min",
-                                style: TextStyle(fontSize: 24)),
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.timer_outlined,
-                                color: AppColors.blueColor,
+                        builder: (context) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: const [
+                                  Center(
+                                      child: Text(
+                                    "Stop sound in",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w700),
+                                  )),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  TimeItem(
+                                    time: 5,
+                                    timePrefix: "minutes",
+                                  ),
+                                  TimeItem(
+                                    time: 15,
+                                    timePrefix: "minutes",
+                                  ),
+                                  TimeItem(
+                                    time: 30,
+                                    timePrefix: "minutes",
+                                  ),
+                                  TimeItem(
+                                    time: 1,
+                                    timePrefix: "hour",
+                                  ),
+                                  TimeItem(
+                                    time: 3,
+                                    timePrefix: "hour",
+                                  ),
+                                  TimeItem(
+                                    time: 5,
+                                    timePrefix: "hour",
+                                  ),
+                                  TimeItem(
+                                    time: 8,
+                                    timePrefix: "hour",
+                                  ),
+                                ]),
+                          );
+                        },
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 20),
+                      margin: const EdgeInsets.symmetric(vertical: 15),
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                AppColors.darkBlueColor,
+                                Color.fromARGB(151, 25, 19, 63)
+                              ])),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              // Time
+                              Text(
+                                "Stops in 30min",
+                                style: TextStyle(
+                                    color: AppColors.dimTextColor,
+                                    fontSize: 15),
                               ),
-                              iconSize: 32,
-                            )
-                          ],
-                        )
-                      ],
+                              Text(
+                                "9:20 am",
+                                style: TextStyle(
+                                    color: AppColors.primaryTextColor,
+                                    fontSize: 13),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text("30 min",
+                                  style: TextStyle(fontSize: 24)),
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(
+                                  Icons.timer_outlined,
+                                  color: AppColors.blueColor,
+                                ),
+                                iconSize: 32,
+                              )
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
 

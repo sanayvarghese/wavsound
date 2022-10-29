@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       // showPerformanceOverlay: true,
       debugShowCheckedModeBanner: false,
-      title: "WavSound",
+      title: "Wav Sounds",
       theme: ThemeData(
         highlightColor: Colors.transparent,
         splashColor: Colors.transparent,
