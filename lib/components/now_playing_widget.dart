@@ -1,6 +1,16 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:like_button/like_button.dart';
+import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 import 'package:wavsound/classes/colors.dart';
+import 'package:wavsound/classes/player.dart';
+import 'package:wavsound/functions/player.dart';
+import 'package:wavsound/functions/shared_pref.dart';
 
 class NowPlayingWidget extends StatefulWidget {
   const NowPlayingWidget(
@@ -23,6 +33,56 @@ class NowPlayingWidget extends StatefulWidget {
 }
 
 class _NowPlayingWidgetState extends State<NowPlayingWidget> {
+  PlayingSound nowPlaying = PlayingSound(
+      "song",
+      "https://sanayvarghese.tk/images/wavsounds/raining.jpg",
+      "",
+      false,
+      false,
+      1,
+      "");
+
+  bool playing = false;
+  void newDataGeter() {
+    StreamingSharedPreferences pref = Get.find();
+    Preference<String> nowPlayingData =
+        pref.getString("nowPlaying", defaultValue: "");
+
+    PlayerFunc.player.playingStream.listen((event) {
+      setState(() {
+        playing = event;
+      });
+    });
+
+    nowPlayingData.listen((value) {
+      Map<String, dynamic> decodedData = json.decode(value);
+      var song = decodedData['song'] ?? "";
+      var image = decodedData['image'] ?? "";
+      var url = decodedData['url'] ?? "";
+      var paused = decodedData['paused'] ?? false;
+      var loop = decodedData['loop'] ?? true;
+      var timer = decodedData['timer'] ?? 0;
+      var source = decodedData['source'] ?? "";
+      var newNowPlaying =
+          PlayingSound(song, image, url, paused, loop, timer, source);
+      setState(() {
+        nowPlaying = newNowPlaying;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    newDataGeter();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    newDataGeter();
+  }
+
   @override
   Widget build(BuildContext context) {
     return widget.nowplaying
@@ -47,25 +107,25 @@ class _NowPlayingWidgetState extends State<NowPlayingWidget> {
                             width: 33,
                             height: 29,
                             margin: const EdgeInsets.only(right: 10),
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(5)),
+                                    const BorderRadius.all(Radius.circular(5)),
                                 image: DecorationImage(
-                                    image: AssetImage("assets/img/raining.jpg"),
+                                    image: NetworkImage(nowPlaying.image),
                                     fit: BoxFit.cover)),
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            children: [
                               Text(
-                                "Raining",
-                                style: TextStyle(
+                                nowPlaying.song,
+                                style: const TextStyle(
                                     color: AppColors.primaryTextColor,
                                     fontSize: 18),
                               ),
                               Text(
-                                "Source: InApp",
-                                style: TextStyle(
+                                "Source: ${nowPlaying.source}",
+                                style: const TextStyle(
                                     color: AppColors.dimTextColor,
                                     fontSize: 12),
                               ),
@@ -78,10 +138,11 @@ class _NowPlayingWidgetState extends State<NowPlayingWidget> {
                           // Like Button
                           LikeButton(
                             onTap: ((isLiked) async {
-                              widget.likeTap(isLiked);
+                              SharePrefFunc.updateLike(nowPlaying.song);
                               return !isLiked;
                             }),
-                            isLiked: widget.favorite,
+                            isLiked:
+                                SharePrefFunc.checkIsLiked(nowPlaying.song),
                             likeBuilder: (isLiked) {
                               return Icon(
                                 isLiked
@@ -101,8 +162,14 @@ class _NowPlayingWidgetState extends State<NowPlayingWidget> {
                           IconButton(
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
-                            onPressed: widget.playTap,
-                            icon: widget.playing
+                            onPressed: () {
+                              if (playing) {
+                                PlayerFunc.player.stop();
+                              } else {
+                                PlayerFunc.player.play();
+                              }
+                            },
+                            icon: playing
                                 ? const Icon(Icons.pause)
                                 : const Icon(Icons.play_arrow_sharp),
                             iconSize: 33,

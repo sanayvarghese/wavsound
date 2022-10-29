@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:wavsound/classes/colors.dart';
 import 'package:wavsound/components/rec_list.dart';
 import 'package:wavsound/components/sub_header_home.dart';
+import 'package:wavsound/functions/player.dart';
 import 'package:wavsound/pages/playlist.dart';
 import 'package:wavsound/pages/settings.dart';
 import 'package:wavsound/pages/sound_import.dart';
@@ -17,6 +18,49 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  void changeNowPlaying(song) {
+    Map<String, dynamic> data = {
+      "song": song["song"],
+      "image": song["image"],
+      "url": song["url"],
+      "paused": false,
+      "timer": 1800,
+      "source": song["source"],
+    };
+    PlayerFunc.onNewSongClick(data, widget.onTap);
+  }
+
+  List<Map<String, dynamic>> topSongs = [
+    {
+      "song": "Raining",
+      "image": "https://sanayvarghese.tk/images/wavsounds/raining.jpg",
+      "url":
+          "https://github.com/sanayvarghese/portfolio_v3/blob/main/public/images/wavsounds/rain.mp3?raw=true",
+      "source": "In App",
+    },
+    {
+      "song": "Thunder",
+      "image": "https://sanayvarghese.tk/images/wavsounds/thunder.jpg",
+      "url":
+          "https://github.com/sanayvarghese/portfolio_v3/blob/main/public/images/wavsounds/rain.mp3?raw=true",
+      "source": "In App",
+    },
+    {
+      "song": "Snow Fall",
+      "image": "https://sanayvarghese.tk/images/wavsounds/snow.jpg",
+      "url":
+          "https://github.com/sanayvarghese/portfolio_v3/blob/main/public/images/wavsounds/rain.mp3?raw=true",
+      "source": "In App",
+    },
+    {
+      "song": "Night Forest",
+      "image": "https://sanayvarghese.tk/images/wavsounds/nightforest.jpg",
+      "url":
+          "https://github.com/sanayvarghese/portfolio_v3/blob/main/public/images/wavsounds/rain.mp3?raw=true",
+      "source": "In App",
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -280,34 +324,23 @@ class _HomeState extends State<Home> {
               // TopSongs Header
               const SubHeader(title: "Top Sounds"),
 
-              GridView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 3.5,
-                    crossAxisSpacing: 30,
-                    mainAxisSpacing: 30),
-                children: [
-                  RecBoxList(
-                      image: "assets/img/raining.jpg",
-                      title: "Raining",
-                      onTap: widget.onTap),
-                  RecBoxList(
-                      image: "assets/img/thunder.jpg",
-                      title: "Thunder",
-                      onTap: widget.onTap),
-                  RecBoxList(
-                      image: "assets/img/snow.jpg",
-                      title: "Snow Fall",
-                      onTap: widget.onTap),
-                  RecBoxList(
-                      image: "assets/img/nightforest.jpg",
-                      title: "Night Forest",
-                      onTap: widget.onTap),
-                ],
-              ),
-
+              GridView.builder(
+                  shrinkWrap: true,
+                  itemCount: topSongs.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 3.5,
+                      crossAxisSpacing: 30,
+                      mainAxisSpacing: 30),
+                  itemBuilder: (context, index) {
+                    return RecBoxList(
+                        image: topSongs[index]["image"],
+                        title: topSongs[index]["song"],
+                        onTap: () {
+                          changeNowPlaying(topSongs[index]);
+                        });
+                  }),
               const SizedBox(
                 height: 20,
               )

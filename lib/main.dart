@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:wavsound/classes/colors.dart';
+import 'package:wavsound/functions/player.dart';
+import 'package:wavsound/functions/shared_pref.dart';
 import 'package:wavsound/persistence_nav_bar.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initGetX();
+  PlayerFunc.initPlayer();
   runApp(const MyApp());
 }
 

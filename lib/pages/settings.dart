@@ -100,7 +100,7 @@ class _SettingsState extends State<Settings> {
               discription: "/storage/0/emulated/WavSound/Imports",
               sideButton: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      primary: Color.fromARGB(255, 41, 32, 32),
+                      primary: const Color.fromARGB(255, 41, 32, 32),
                       onSurface: Colors.amber,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10))),

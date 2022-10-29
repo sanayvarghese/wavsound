@@ -28,7 +28,8 @@ class PersistentBottomBarScaffoldState
   var favorite = false;
   var playing = false;
   var nowplaying = true;
-  onTap() {
+
+  openNowPlaying() {
     Navigator.of(context).push(CustomPageRoute(child: const NowPlaying()));
   }
 
@@ -99,7 +100,7 @@ class PersistentBottomBarScaffoldState
     List<PersistentTabItem> items = [
       PersistentTabItem(
         tab: Home(
-          onTap: onTap,
+          onTap: openNowPlaying,
         ),
         icon: Icons.home_outlined,
         title: 'Home',
@@ -107,7 +108,7 @@ class PersistentBottomBarScaffoldState
       ),
       PersistentTabItem(
         tab: Library(
-          onTap: onTap,
+          onTap: openNowPlaying,
         ),
         icon: Icons.library_music_outlined,
         title: 'Library',
@@ -165,7 +166,7 @@ class PersistentBottomBarScaffoldState
           mainAxisSize: MainAxisSize.min,
           children: [
             NowPlayingWidget(
-              onTap: onTap,
+              onTap: openNowPlaying,
               nowplaying: nowplaying,
               favorite: favorite,
               playing: playing,

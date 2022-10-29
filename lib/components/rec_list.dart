@@ -25,7 +25,7 @@ class RecBoxList extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(5)),
                 image: DecorationImage(
-                    image: AssetImage(image), fit: BoxFit.cover)),
+                    image: NetworkImage(image), fit: BoxFit.cover)),
           ),
           Text(
             title,

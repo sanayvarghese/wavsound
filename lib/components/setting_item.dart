@@ -36,14 +36,14 @@ class SettingItem extends StatelessWidget {
               Container(
                 width: sideButton != null
                     ? MediaQuery.of(context).size.width / 1.5
-                    : MediaQuery.of(context).size.width - 50,
+                    : MediaQuery.of(context).size.height * 0.45,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w300),
+                      style: const TextStyle(
+                          fontSize: 17, fontWeight: FontWeight.w300),
                     ),
                     if (discription != null)
                       Text(

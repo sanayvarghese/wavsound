@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
+import 'package:marquee/marquee.dart';
 import 'package:wavsound/classes/colors.dart';
 import 'package:wavsound/components/time_item.dart';
 
@@ -52,11 +53,20 @@ class _NowPlayingState extends State<NowPlaying> {
                       iconSize: 40,
                       color: AppColors.iconColor,
                     ),
-                    const Text("Now Playing",
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: AppColors.primaryTextColor,
-                        )),
+                    Column(
+                      children: const [
+                        Text("Now Playing",
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: AppColors.primaryTextColor,
+                            )),
+                        Text(
+                          "Source: In App",
+                          style: TextStyle(
+                              color: AppColors.dimTextColor, fontSize: 8),
+                        ),
+                      ],
+                    ),
                     const SizedBox(
                       width: 20,
                     )
@@ -119,16 +129,15 @@ class _NowPlayingState extends State<NowPlaying> {
                                     timePrefix: "hour",
                                   ),
                                   TimeItem(
-                                    time: 3,
-                                    timePrefix: "hour",
-                                  ),
-                                  TimeItem(
-                                    time: 5,
+                                    time: 4,
                                     timePrefix: "hour",
                                   ),
                                   TimeItem(
                                     time: 8,
                                     timePrefix: "hour",
+                                  ),
+                                  TimeItem(
+                                    timePrefix: "End of Track",
                                   ),
                                 ]),
                           );
@@ -192,53 +201,53 @@ class _NowPlayingState extends State<NowPlaying> {
 
                   // Music Manager
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Raining",
-                            style: TextStyle(
-                                color: AppColors.dimTextColor, fontSize: 25),
+                      SoundTitle(context, "Rainingsssssssssssss"),
+                      const SizedBox(
+                        width: 30,
+                      ),
+                      Row(
+                        children: [
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: onRepeat,
+                            icon: isRepeat
+                                ? const Icon(
+                                    Icons.download_done_rounded,
+                                  )
+                                : const Icon(
+                                    Icons.downloading_outlined,
+                                  ),
+                            iconSize: 32,
+                            color: isRepeat
+                                ? Color.fromARGB(255, 38, 187, 50)
+                                : AppColors.iconColor,
                           ),
-                          Text(
-                            "Source: In App",
-                            style: TextStyle(
-                                color: AppColors.primaryTextColor,
-                                fontSize: 13),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          LikeButton(
+                            onTap: ((isLiked) async {
+                              onLike(isLiked);
+                              return !isLiked;
+                            }),
+                            isLiked: isFav,
+                            likeBuilder: (isLiked) {
+                              return Icon(
+                                isLiked
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color:
+                                    isLiked ? Colors.red : AppColors.iconColor,
+                                size: 28,
+                              );
+                            },
                           ),
                         ],
                       ),
-                      const Spacer(),
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        onPressed: onRepeat,
-                        icon: const Icon(
-                          Icons.repeat,
-                        ),
-                        iconSize: 32,
-                        color: isRepeat
-                            ? AppColors.secondaryColor
-                            : AppColors.iconColor,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      LikeButton(
-                        onTap: ((isLiked) async {
-                          onLike(isLiked);
-                          return !isLiked;
-                        }),
-                        isLiked: isFav,
-                        likeBuilder: (isLiked) {
-                          return Icon(
-                            isLiked ? Icons.favorite : Icons.favorite_border,
-                            color: isLiked ? Colors.red : AppColors.iconColor,
-                            size: 28,
-                          );
-                        },
-                      ),
+                      // Spacer(),
                     ],
                   ),
 
@@ -363,4 +372,32 @@ class _NowPlayingState extends State<NowPlaying> {
       ),
     );
   }
+}
+
+Widget SoundTitle(context, String song) {
+  return song.length > 18
+      ? Expanded(
+          child: Container(
+              height: 30,
+              width: 50,
+              child: Marquee(
+                text: song,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                scrollAxis: Axis.horizontal, //scroll direction
+                crossAxisAlignment: CrossAxisAlignment.start,
+                blankSpace: 30.0,
+                velocity: 50.0, //speed
+                pauseAfterRound: const Duration(seconds: 4),
+                startPadding: 10.0,
+                accelerationDuration: const Duration(seconds: 1),
+                accelerationCurve: Curves.linear,
+                decelerationDuration: const Duration(milliseconds: 500),
+                decelerationCurve: Curves.easeOut,
+              )),
+        )
+      : Text(
+          song,
+          style: TextStyle(color: AppColors.dimTextColor, fontSize: 25),
+        );
 }
