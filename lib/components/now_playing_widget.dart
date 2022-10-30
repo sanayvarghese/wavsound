@@ -44,7 +44,7 @@ class _NowPlayingWidgetState extends State<NowPlayingWidget> {
 
   bool playing = false;
   void newDataGeter() {
-    StreamingSharedPreferences pref = Get.find();
+    StreamingSharedPreferences pref = SharePrefFunc.pref;
     Preference<String> nowPlayingData =
         pref.getString("nowPlaying", defaultValue: "");
 
@@ -65,9 +65,11 @@ class _NowPlayingWidgetState extends State<NowPlayingWidget> {
       var source = decodedData['source'] ?? "";
       var newNowPlaying =
           PlayingSound(song, image, url, paused, loop, timer, source);
-      setState(() {
-        nowPlaying = newNowPlaying;
-      });
+      if (mounted) {
+        setState(() {
+          nowPlaying = newNowPlaying;
+        });
+      }
     });
   }
 
@@ -85,7 +87,9 @@ class _NowPlayingWidgetState extends State<NowPlayingWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.nowplaying
+    return nowPlaying.song != "Unknown" &&
+            nowPlaying.song != "null" &&
+            nowPlaying.song != ""
         ? Material(
             child: GestureDetector(
               onTap: widget.onTap,
@@ -159,22 +163,60 @@ class _NowPlayingWidgetState extends State<NowPlayingWidget> {
 
                           // Play/Pause Button
 
-                          IconButton(
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              if (playing) {
-                                PlayerFunc.player.stop();
+                          StreamBuilder<PlayerState>(
+                            stream: PlayerFunc.player.playerStateStream,
+                            builder: (context, snapshot) {
+                              final playerState = snapshot.data;
+                              final processingState =
+                                  playerState?.processingState;
+                              final playing = playerState?.playing;
+                              if (processingState == ProcessingState.loading ||
+                                  processingState ==
+                                      ProcessingState.buffering) {
+                                return Container(
+                                  margin: const EdgeInsets.all(8.0),
+                                  width: 25,
+                                  height: 25,
+                                  child: const CircularProgressIndicator(),
+                                );
+                              } else if (playing != true) {
+                                return IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: PlayerFunc.player.play,
+                                  icon: const Icon(
+                                    Icons.play_arrow,
+                                  ),
+                                  iconSize: 33,
+                                  color: AppColors.primaryTextColor,
+                                );
+                              } else if (processingState !=
+                                  ProcessingState.completed) {
+                                return IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: PlayerFunc.player.pause,
+                                  icon: const Icon(
+                                    Icons.pause,
+                                  ),
+                                  iconSize: 33,
+                                  color: AppColors.primaryTextColor,
+                                );
                               } else {
-                                PlayerFunc.player.play();
+                                return IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () =>
+                                      PlayerFunc.player.seek(Duration.zero),
+                                  icon: const Icon(
+                                    Icons.replay,
+                                  ),
+                                  iconSize: 33,
+                                  color: AppColors.primaryTextColor,
+                                );
                               }
                             },
-                            icon: playing
-                                ? const Icon(Icons.pause)
-                                : const Icon(Icons.play_arrow_sharp),
-                            iconSize: 33,
-                            color: AppColors.iconColor,
-                          )
+                          ),
                         ],
                       )
                     ],

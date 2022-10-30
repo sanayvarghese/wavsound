@@ -1,8 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:like_button/like_button.dart';
 import 'package:marquee/marquee.dart';
+import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 import 'package:wavsound/classes/colors.dart';
+import 'package:wavsound/classes/player.dart';
 import 'package:wavsound/components/time_item.dart';
+import 'package:wavsound/functions/player.dart';
+import 'package:wavsound/functions/shared_pref.dart';
 
 class NowPlaying extends StatefulWidget {
   const NowPlaying({Key? key}) : super(key: key);
@@ -12,11 +20,58 @@ class NowPlaying extends StatefulWidget {
 }
 
 class _NowPlayingState extends State<NowPlaying> {
-  var isFav = false;
-  onLike(isLiked) {
-    setState(() {
-      isFav = !isLiked;
+  PlayingSound nowPlaying = PlayingSound(
+      "song",
+      "https://sanayvarghese.tk/images/wavsounds/raining.jpg",
+      "",
+      false,
+      false,
+      1,
+      "");
+
+  // bool playing = false;
+  void newDataGeter() {
+    StreamingSharedPreferences pref = SharePrefFunc.pref;
+    Preference<String> nowPlayingData =
+        pref.getString("nowPlaying", defaultValue: "");
+
+    // PlayerFunc.player.playingStream.listen((event) {
+    //   if (mounted) {
+    //     setState(() {
+    //       playing = event;
+    //     });
+    //   }
+    // });
+
+    nowPlayingData.listen((value) {
+      Map<String, dynamic> decodedData = json.decode(value);
+      var song = decodedData['song'] ?? "";
+      var image = decodedData['image'] ?? "";
+      var url = decodedData['url'] ?? "";
+      var paused = decodedData['paused'] ?? false;
+      var loop = decodedData['loop'] ?? true;
+      var timer = decodedData['timer'] ?? 0;
+      var source = decodedData['source'] ?? "";
+      var newNowPlaying =
+          PlayingSound(song, image, url, paused, loop, timer, source);
+      if (mounted) {
+        setState(() {
+          nowPlaying = newNowPlaying;
+        });
+      }
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    newDataGeter();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    newDataGeter();
   }
 
   var isRepeat = false;
@@ -25,8 +80,6 @@ class _NowPlayingState extends State<NowPlaying> {
       isRepeat = !isRepeat;
     });
   }
-
-  var volume = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -54,15 +107,15 @@ class _NowPlayingState extends State<NowPlaying> {
                       color: AppColors.iconColor,
                     ),
                     Column(
-                      children: const [
-                        Text("Now Playing",
+                      children: [
+                        const Text("Now Playing",
                             style: TextStyle(
                               fontSize: 15,
                               color: AppColors.primaryTextColor,
                             )),
                         Text(
-                          "Source: In App",
-                          style: TextStyle(
+                          "Source: ${nowPlaying.source}",
+                          style: const TextStyle(
                               color: AppColors.dimTextColor, fontSize: 8),
                         ),
                       ],
@@ -78,10 +131,11 @@ class _NowPlayingState extends State<NowPlaying> {
                     width: MediaQuery.of(context).size.width / 1.2,
                     height: MediaQuery.of(context).size.height / 2.5,
                     margin: const EdgeInsets.only(bottom: 30, top: 30),
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                    decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
                         image: DecorationImage(
-                            image: AssetImage("assets/img/raining.jpg"),
+                            image: NetworkImage(nowPlaying.image),
                             fit: BoxFit.cover)),
                   ),
                   // Time Bar
@@ -203,7 +257,7 @@ class _NowPlayingState extends State<NowPlaying> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SoundTitle(context, "Rainingsssssssssssss"),
+                      SoundTitle(context, nowPlaying.song),
                       const SizedBox(
                         width: 30,
                       ),
@@ -230,10 +284,11 @@ class _NowPlayingState extends State<NowPlaying> {
                           ),
                           LikeButton(
                             onTap: ((isLiked) async {
-                              onLike(isLiked);
+                              SharePrefFunc.updateLike(nowPlaying.song);
                               return !isLiked;
                             }),
-                            isLiked: isFav,
+                            isLiked:
+                                SharePrefFunc.checkIsLiked(nowPlaying.song),
                             likeBuilder: (isLiked) {
                               return Icon(
                                 isLiked
@@ -257,60 +312,48 @@ class _NowPlayingState extends State<NowPlaying> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
+                        const IconButton(
                           padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          onPressed: () {
-                            if (volume >= 10) {
-                              setState(() {
-                                volume -= 10;
-                              });
-                            }
-                          },
-                          icon: const Icon(
+                          constraints: BoxConstraints(),
+                          onPressed: PlayerFunc.decVolume,
+                          icon: Icon(
                             Icons.volume_down,
                           ),
                           iconSize: 32,
                           color: AppColors.iconColor,
                         ),
-                        Expanded(
-                            child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            thumbShape: const RoundSliderThumbShape(
-                                enabledThumbRadius: 5.0),
-                            overlayShape: const RoundSliderOverlayShape(
-                                overlayRadius: 15),
-                            trackHeight: 1.5,
-                          ),
-                          child: Slider(
-                              value: volume.toDouble(),
-                              min: 0,
-                              max: 100,
-                              activeColor:
-                                  const Color.fromRGBO(220, 219, 219, 1),
-                              inactiveColor:
-                                  const Color.fromRGBO(75, 75, 75, 1),
-                              label: 'Set volume value',
-                              onChanged: (double newValue) {
-                                setState(() {
-                                  volume = newValue.round();
-                                });
-                              },
-                              semanticFormatterCallback: (double newValue) {
-                                return '${newValue.round()} dollars';
-                              }),
-                        )),
-                        IconButton(
+                        StreamBuilder<double>(
+                            stream: PlayerFunc.player.volumeStream,
+                            builder: (context, snapshot) {
+                              return Expanded(
+                                  child: SliderTheme(
+                                      data: SliderTheme.of(context).copyWith(
+                                        thumbShape: const RoundSliderThumbShape(
+                                            enabledThumbRadius: 5.0),
+                                        overlayShape:
+                                            const RoundSliderOverlayShape(
+                                                overlayRadius: 15),
+                                        trackHeight: 1.5,
+                                      ),
+                                      child: Slider(
+                                        value: snapshot.data != null
+                                            ? snapshot.data! * 100
+                                            : 100,
+                                        min: 0,
+                                        max: 100,
+                                        activeColor: const Color.fromRGBO(
+                                            220, 219, 219, 1),
+                                        inactiveColor:
+                                            const Color.fromRGBO(75, 75, 75, 1),
+                                        label: 'Set volume value',
+                                        onChanged: PlayerFunc.setVolume,
+                                      )));
+                            }),
+                        const IconButton(
                           padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          onPressed: () {
-                            if (volume <= 90) {
-                              setState(() {
-                                volume += 10;
-                              });
-                            }
-                          },
-                          icon: const Icon(
+                          constraints: BoxConstraints(),
+                          onPressed: PlayerFunc.incVolume,
+                          icon: Icon(
                             Icons.volume_up,
                           ),
                           iconSize: 32,
@@ -324,31 +367,73 @@ class _NowPlayingState extends State<NowPlaying> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      IconButton(
+                      const IconButton(
                         padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        onPressed: () {},
-                        icon: const Icon(
+                        constraints: BoxConstraints(),
+                        onPressed: PlayerFunc.rewind,
+                        icon: Icon(
                           Icons.replay_10,
                         ),
                         iconSize: 50,
                         color: AppColors.primaryTextColor,
                       ),
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.play_circle,
-                        ),
-                        iconSize: 70,
-                        color: AppColors.primaryTextColor,
+                      StreamBuilder<PlayerState>(
+                        stream: PlayerFunc.player.playerStateStream,
+                        builder: (context, snapshot) {
+                          final playerState = snapshot.data;
+                          final processingState = playerState?.processingState;
+                          final playing = playerState?.playing;
+                          if (processingState == ProcessingState.loading ||
+                              processingState == ProcessingState.buffering) {
+                            return Container(
+                              margin: const EdgeInsets.all(8.0),
+                              width: 60.0,
+                              height: 60.0,
+                              child: const CircularProgressIndicator(),
+                            );
+                          } else if (playing != true) {
+                            return IconButton(
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed: PlayerFunc.player.play,
+                              icon: const Icon(
+                                Icons.play_circle,
+                              ),
+                              iconSize: 70,
+                              color: AppColors.primaryTextColor,
+                            );
+                          } else if (processingState !=
+                              ProcessingState.completed) {
+                            return IconButton(
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed: PlayerFunc.player.pause,
+                              icon: const Icon(
+                                Icons.pause_circle,
+                              ),
+                              iconSize: 70,
+                              color: AppColors.primaryTextColor,
+                            );
+                          } else {
+                            return IconButton(
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed: () =>
+                                  PlayerFunc.player.seek(Duration.zero),
+                              icon: const Icon(
+                                Icons.replay,
+                              ),
+                              iconSize: 70,
+                              color: AppColors.primaryTextColor,
+                            );
+                          }
+                        },
                       ),
-                      IconButton(
+                      const IconButton(
                         padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        onPressed: () {},
-                        icon: const Icon(
+                        constraints: BoxConstraints(),
+                        onPressed: PlayerFunc.skip,
+                        icon: Icon(
                           Icons.forward_10,
                         ),
                         iconSize: 50,

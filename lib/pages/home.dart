@@ -42,7 +42,7 @@ class _HomeState extends State<Home> {
       "song": "Thunder",
       "image": "https://sanayvarghese.tk/images/wavsounds/thunder.jpg",
       "url":
-          "https://github.com/sanayvarghese/portfolio_v3/blob/main/public/images/wavsounds/rain.mp3?raw=true",
+          "https://samples.audible.com/or/orig/000937/or_orig_000937_sample.mp3",
       "source": "In App",
     },
     {

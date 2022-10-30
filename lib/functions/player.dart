@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:wavsound/functions/shared_pref.dart';
@@ -8,17 +9,22 @@ class PlayerFunc {
 
   static initPlayer() async {
     Map<String, dynamic> lastSound = SharePrefFunc.getnowPlayingSound();
-    if (lastSound != {} || lastSound != "{}") {
-      player.setAudioSource(AudioSource.uri(Uri.parse(lastSound["url"]),
-          tag: MediaItem(
-              id: lastSound["url"],
-              title: lastSound["song"],
-              album: lastSound["source"],
-              artUri: Uri.parse(lastSound["image"]))));
-      player.setVolume(SharePrefFunc.pref
-              .getDouble("volume", defaultValue: 100.0)
-              .getValue() /
-          100);
+    if (lastSound != {}) {
+      try {
+        player.setAudioSource(AudioSource.uri(Uri.parse(lastSound["url"]),
+            tag: MediaItem(
+                id: lastSound["url"],
+                title: lastSound["song"],
+                album: lastSound["source"],
+                artUri: Uri.parse(lastSound["image"]))));
+        player.setVolume(SharePrefFunc.pref
+                .getDouble("volume", defaultValue: 100.0)
+                .getValue() /
+            100);
+        debugPrint("Previous Played song initialized");
+      } catch (e) {
+        debugPrint("No Internet Connection");
+      }
     }
   }
 
@@ -34,9 +40,9 @@ class PlayerFunc {
     player.setVolume(
         SharePrefFunc.pref.getDouble("volume", defaultValue: 100.0).getValue() /
             100);
+    callback();
     player.play();
     SharePrefFunc.setIsCurrentPlaying(true);
-    callback();
   }
 
   static onLike(bool isLiked, songName) {
@@ -50,6 +56,18 @@ class PlayerFunc {
   static setVolume(newValue) {
     SharePrefFunc.plyrSetVolu(newValue: newValue);
     player.setVolume(newValue / 100 ?? 1.0);
+  }
+
+  static decVolume() {
+    if (player.volume * 100 >= 10) {
+      setVolume((player.volume * 100) - 10);
+    }
+  }
+
+  static incVolume() {
+    if (player.volume * 100 <= 90) {
+      setVolume((player.volume * 100) + 10);
+    }
   }
 
   static onPause({bool? isPause}) {
